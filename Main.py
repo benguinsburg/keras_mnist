@@ -197,6 +197,42 @@ def AlphaModel(input_shape, classes):
 
     return model
 
+def BetaModel(input_shape, classes):
+    """
+    Arguments:
+    input_shape -- shape of the images of the dataset
+
+    Returns:
+    model -- a Model() instance in Keras
+    """
+
+    X_input = Input(input_shape)
+
+    X = Flatten()(X_input)
+
+    X = Dense(784, activation='relu',
+              kernel_initializer='TruncatedNormal')(X)
+    X = Dropout(0.1)(X)
+
+    X = Dense(600, activation='relu',
+              kernel_initializer='TruncatedNormal')(X)
+    X = Dropout(0.2)(X)
+
+    X = Dense(700, activation='relu',
+              kernel_initializer='TruncatedNormal')(X)
+    X = Dropout(0.3)(X)
+
+    X = Dense(300, activation='relu',
+              kernel_initializer='TruncatedNormal')(X)
+    X = Dropout(0.5)(X)
+
+    X = Dense(classes, activation='softmax',
+              kernel_initializer='TruncatedNormal')(X)
+
+    model = Model(inputs=X_input, outputs=X, name='AlphaModel')
+
+    return model
+
 ################################################################################################################
                                     #Session#
 ################################################################################################################
@@ -228,7 +264,7 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 if load_flag:
     model = load_model()
 else:
-    model = AlphaModel(x_train.shape[1:], classes=num_classes)
+    model = BetaModel(x_train.shape[1:], classes=num_classes)
 
 model.compile(optimizer=optimizers.Adamax(), loss="categorical_crossentropy", metrics=["accuracy"])
 model.fit(x = x_train, y = y_train, epochs = epochs, batch_size = batch_size)
